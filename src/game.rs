@@ -1,6 +1,7 @@
 use std::fmt;
 
 use serde::{Serialize};
+use pyo3::prelude::*;
 
 use super::{character, frame, metadata, stage};
 
@@ -316,6 +317,7 @@ query_impl!(Port, self, f, config, query {
 	}
 });
 
+#[pyclass]
 #[derive(Debug, PartialEq, Serialize)]
 pub struct Game {
 	pub start: Start,
