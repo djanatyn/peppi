@@ -1,7 +1,7 @@
 use std::cmp::{min};
 use std::collections::HashMap;
 use std::convert::TryFrom;
-use std::io::{Read, Seek, Result};
+use std::io::{Read, Seek, SeekFrom, Result};
 
 use byteorder::{BigEndian, ReadBytesExt};
 use encoding_rs::SHIFT_JIS;
@@ -616,4 +616,23 @@ pub fn parse<R:Read + Seek, H:Handlers>(mut r:R, handlers:&mut H) -> Result<()> 
 	expect_bytes(&mut r, &[0x7d])?;
 
 	Ok(())
+}
+
+pub fn parse_metadata<R:Read + Seek, H:Handlers>(mut r:R) -> Result<HashMap<String, ubjson::Object>> {
+	// header ("{U\x03raw[$U#l")
+	expect_bytes(&mut r, &[0x7b, 0x55, 0x03, 0x72, 0x61, 0x77, 0x5b, 0x24, 0x55, 0x23, 0x6c])?;
+
+	let raw_length = r.read_u32::<BigEndian>()?;
+
+	r.seek(SeekFrom::Current(raw_length as i64))?;
+
+	// metadata key & start ("U\x08metadata{")
+	expect_bytes(&mut r, &[0x55, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x7b])?;
+
+	let metadata = ubjson::parse_map(&mut r)?;
+
+	// closing UBJSON brace & end of file ("}")
+	expect_bytes(&mut r, &[0x7d])?;
+
+	Ok(metadata)
 }
