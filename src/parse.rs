@@ -618,7 +618,7 @@ pub fn parse<R:Read, H:Handlers>(mut r:R, handlers:&mut H) -> Result<()> {
 	Ok(())
 }
 
-pub fn parse_metadata<R:Read + Seek, H:Handlers>(mut r:R) -> Result<HashMap<String, ubjson::Object>> {
+pub fn parse_metadata<R:Read + Seek>(mut r:R) -> Result<HashMap<String, ubjson::Object>> {
 	// header ("{U\x03raw[$U#l")
 	expect_bytes(&mut r, &[0x7b, 0x55, 0x03, 0x72, 0x61, 0x77, 0x5b, 0x24, 0x55, 0x23, 0x6c])?;
 
