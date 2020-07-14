@@ -596,7 +596,7 @@ fn event<R:Read, H:Handlers>(mut r:R, payload_sizes:&HashMap<u8, u16>, last_char
 	}
 }
 
-pub fn parse<R:Read + Seek, H:Handlers>(mut r:R, handlers:&mut H) -> Result<()> {
+pub fn parse<R:Read, H:Handlers>(mut r:R, handlers:&mut H) -> Result<()> {
 	// header ("{U\x03raw[$U#l")
 	expect_bytes(&mut r, &[0x7b, 0x55, 0x03, 0x72, 0x61, 0x77, 0x5b, 0x24, 0x55, 0x23, 0x6c])?;
 
